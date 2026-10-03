@@ -56,7 +56,7 @@ jobs:
       - name: Configure Terraform Cloud
         run: |
           mkdir -p "$HOME/.terraform.d"
-          cat > "$HOME/.terraform.d/config.hcl" <<EOF
+          cat > "$HOME/.terraform.d/cli.tfrc" <<EOF
           credentials "app.terraform.io" {
             token = "${{ secrets.TFC_TOKEN }}"
           }
