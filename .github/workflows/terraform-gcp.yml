@@ -80,7 +80,7 @@ jobs:
         working-directory: infra-gcp
         env:
           TF_VAR_gcp_project_id: ${{ env.GCP_PROJECT_ID }}
-          TF_VAR_github_owner: ${{ vars.GITHUB_OWNER }}
+          TF_VAR_github_owner: ${{ vars.GH_OWNER }}
           TF_VAR_github_repository: ${{ vars.GITHUB_REPOSITORY }}
         run: |
           terraform plan -input=false
@@ -90,7 +90,7 @@ jobs:
         working-directory: infra-gcp
         env:
           TF_VAR_gcp_project_id: ${{ env.GCP_PROJECT_ID }}
-          TF_VAR_github_owner: ${{ vars.GITHUB_OWNER }}
+          TF_VAR_github_owner: ${{ vars.GH_OWNER }}
           TF_VAR_github_repository: ${{ vars.GITHUB_REPOSITORY }}
         run: |
           terraform apply -auto-approve -input=false
@@ -100,7 +100,7 @@ jobs:
         working-directory: infra-gcp
         env:
           TF_VAR_gcp_project_id: ${{ env.GCP_PROJECT_ID }}
-          TF_VAR_github_owner: ${{ vars.GITHUB_OWNER }}
+          TF_VAR_github_owner: ${{ vars.GH_OWNER }}
           TF_VAR_github_repository: ${{ vars.GITHUB_REPOSITORY }}
         run: |
           terraform destroy -auto-approve -input=false

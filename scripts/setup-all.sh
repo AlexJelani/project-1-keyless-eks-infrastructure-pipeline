@@ -213,7 +213,7 @@ if [ "$USE_GH_CLI" = true ]; then
         if [ -n "$BUCKET_NAME" ]; then
             gh variable set TF_STATE_BUCKET --body "$BUCKET_NAME"
         fi
-        gh variable set GITHUB_OWNER --body "$GITHUB_OWNER"
+        gh variable set GH_OWNER --body "$GITHUB_OWNER"
         gh variable set GITHUB_REPOSITORY --body "$REPO_NAME"
         
         echo -e "${GREEN}✓ Variables set via gh CLI${NC}"
