@@ -1,10 +1,11 @@
 # Backend configuration - HCP Terraform remote backend
 # Organization and workspace are set via environment variables:
-#   TF_VAR_organization (or TF_ORGANIZATION)
+#   TF_ORGANIZATION
 #   TF_WORKSPACE
+# Token is read from ~/.terraform.d/token
 
 terraform {
-  backend "cloud" {
+  cloud {
     hostname = "app.terraform.io"
   }
 }
