@@ -43,9 +43,9 @@ resource "google_container_cluster" "primary" {
 
 # Node pool with preemptible (spot) instances for cost savings
 resource "google_container_node_pool" "primary" {
-  name       = "${var.cluster_name}-node-pool"
-  location   = var.region
-  cluster    = google_container_cluster.primary.name
+  name     = "${var.cluster_name}-node-pool"
+  location = var.region
+  cluster  = google_container_cluster.primary.name
 
   # Use preemptible instances for cost savings (~60% discount)
   node_config {
