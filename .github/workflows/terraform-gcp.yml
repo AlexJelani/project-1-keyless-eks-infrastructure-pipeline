@@ -1,9 +1,6 @@
 name: Terraform GCP
 
 on:
-  push:
-    branches: [main]
-    paths: ["infra-gcp/**", "scripts/**"]
   workflow_dispatch:
     inputs:
       terraform_action:

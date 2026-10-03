@@ -1,9 +1,6 @@
 name: Build and deploy Azure
 
 on:
-  push:
-    branches: [main]
-    paths: ["app/**", "k8s/**"]
   workflow_dispatch:
     inputs:
       image_tag:

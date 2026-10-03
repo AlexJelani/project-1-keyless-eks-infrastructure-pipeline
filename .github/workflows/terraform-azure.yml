@@ -1,9 +1,6 @@
 name: Terraform Azure
 
 on:
-  push:
-    branches: [main]
-    paths: ["infra-azure/**", "scripts/**"]
   workflow_dispatch:
     inputs:
       terraform_action:
