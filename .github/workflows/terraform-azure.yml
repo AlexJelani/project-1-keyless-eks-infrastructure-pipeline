@@ -31,10 +31,11 @@ permissions:
 
 env:
   TF_IN_AUTOMATION: true
+  TFC_ORGANIZATION: ${{ vars.TFC_ORGANIZATION }}
+  TFC_WORKSPACE: ${{ vars.TFC_WORKSPACE }}
   AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
   AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
   TF_STATE_SA: ${{ vars.TF_STATE_SA }}
-  TF_STATE_CONTAINER: ${{ vars.TF_STATE_CONTAINER }}
 
 jobs:
   plan-and-apply:
@@ -49,37 +50,28 @@ jobs:
 
       - name: Check required variables
         run: |
-          if [ -z "${AZURE_SUBSCRIPTION_ID}" ]; then
-            echo "Error: AZURE_SUBSCRIPTION_ID variable is not set"
+          if [ -z "${TFC_ORGANIZATION}" ]; then
+            echo "Error: TFC_ORGANIZATION variable is not set"
             exit 1
           fi
-          if [ -z "${AZURE_TENANT_ID}" ]; then
-            echo "Error: AZURE_TENANT_ID variable is not set"
+          if [ -z "${TFC_WORKSPACE}" ]; then
+            echo "Error: TFC_WORKSPACE variable is not set"
             exit 1
           fi
-          if [ -z "${TF_STATE_SA}" ]; then
-            echo "Error: TF_STATE_SA variable is not set"
-            exit 1
-          fi
-          echo "✓ Required variables are set"
+          echo "✓ HCP Terraform variables are set"
 
-      - name: Authenticate to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ vars.AZURE_CLIENT_ID }}
-          tenant-id: ${{ vars.AZURE_TENANT_ID }}
-          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Configure Terraform Cloud
+        run: |
+          echo "token = ${{ secrets.TFC_TOKEN }}" > ~/.terraform.d/credentials.tfrc.json
 
       - name: Terraform init
         working-directory: infra-azure
         run: |
           terraform init \
-            -backend-config="storage_account_name=${TF_STATE_SA}" \
-            -backend-config="container_name=${TF_STATE_CONTAINER}" \
-            -backend-config="key=keyless-aks/terraform.tfstate" \
-            -backend-config="resource_group_name=${TF_STATE_RG}" \
-            -backend-config="subscription_id=${AZURE_SUBSCRIPTION_ID}" \
-            -backend-config="tenant_id=${AZURE_TENANT_ID}"
+            -backend-config="address=https://app.terraform.io/api/v2/" \
+            -backend-config="organization=${TFC_ORGANIZATION}" \
+            -backend-config="workspaces.name=${TFC_WORKSPACE}" \
+            -backend-config="token=${{ secrets.TFC_TOKEN }}"
 
       - name: Terraform format and validate
         working-directory: infra-azure
@@ -96,7 +88,7 @@ jobs:
           TF_VAR_github_owner: ${{ vars.GITHUB_OWNER }}
           TF_VAR_github_repository: ${{ vars.GITHUB_REPOSITORY }}
         run: |
-          terraform plan -out=tfplan
+          terraform plan -input=false
 
       - name: Terraform apply
         if: ${{ github.event.inputs.terraform_action == 'apply' }}
@@ -107,7 +99,7 @@ jobs:
           TF_VAR_github_owner: ${{ vars.GITHUB_OWNER }}
           TF_VAR_github_repository: ${{ vars.GITHUB_REPOSITORY }}
         run: |
-          terraform apply -auto-approve tfplan
+          terraform apply -auto-approve -input=false
 
       - name: Terraform destroy
         if: ${{ github.event.inputs.terraform_action == 'destroy' }}
@@ -118,4 +110,4 @@ jobs:
           TF_VAR_github_owner: ${{ vars.GITHUB_OWNER }}
           TF_VAR_github_repository: ${{ vars.GITHUB_REPOSITORY }}
         run: |
-          terraform destroy -auto-approve
+          terraform destroy -auto-approve -input=false

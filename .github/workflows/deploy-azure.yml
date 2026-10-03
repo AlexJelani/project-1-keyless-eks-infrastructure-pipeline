@@ -22,6 +22,8 @@ permissions:
   id-token: write
 
 env:
+  TFC_ORGANIZATION: ${{ vars.TFC_ORGANIZATION }}
+  TFC_WORKSPACE: ${{ vars.TFC_WORKSPACE }}
   AZURE_SUBSCRIPTION_ID: ${{ vars.AZURE_SUBSCRIPTION_ID }}
   AZURE_TENANT_ID: ${{ vars.AZURE_TENANT_ID }}
   ACR_LOGIN_SERVER: ${{ vars.ACR_LOGIN_SERVER }}
@@ -36,6 +38,14 @@ jobs:
 
       - name: Check required variables
         run: |
+          if [ -z "${TFC_ORGANIZATION}" ]; then
+            echo "Error: TFC_ORGANIZATION variable is not set"
+            exit 1
+          fi
+          if [ -z "${TFC_WORKSPACE}" ]; then
+            echo "Error: TFC_WORKSPACE variable is not set"
+            exit 1
+          fi
           if [ -z "${AZURE_SUBSCRIPTION_ID}" ]; then
             echo "Error: AZURE_SUBSCRIPTION_ID variable is not set"
             exit 1

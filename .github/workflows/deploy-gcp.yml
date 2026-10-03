@@ -22,6 +22,8 @@ permissions:
   id-token: write
 
 env:
+  TFC_ORGANIZATION: ${{ vars.TFC_ORGANIZATION }}
+  TFC_WORKSPACE: keyless-eks-infra-gcp
   GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
   ARTIFACT_REGISTRY_REPO: ${{ vars.ARTIFACT_REGISTRY_REPO }}
   GKE_CLUSTER_NAME: ${{ vars.GKE_CLUSTER_NAME }}
@@ -35,6 +37,14 @@ jobs:
 
       - name: Check required variables
         run: |
+          if [ -z "${TFC_ORGANIZATION}" ]; then
+            echo "Error: TFC_ORGANIZATION variable is not set"
+            exit 1
+          fi
+          if [ -z "${TFC_WORKSPACE}" ]; then
+            echo "Error: TFC_WORKSPACE variable is not set"
+            exit 1
+          fi
           if [ -z "${GCP_PROJECT_ID}" ]; then
             echo "Error: GCP_PROJECT_ID variable is not set"
             exit 1

@@ -1,10 +1,14 @@
-# Backend configuration - stored in backend.hcl
-# Example backend.hcl contents:
-#   storage_account_name = "myterraformstate"
-#   container_name       = "tfstate"
-#   key                  = "keyless-aks/terraform.tfstate"
-#   resource_group_name  = "my-rg"
+# Backend configuration - HCP Terraform remote backend
+# Update with your Terraform Cloud organization and workspace names
 
 terraform {
-  backend "azurerm" {}
+  backend "http" {
+    # These values are set via CLI or environment variables
+    # terraform login and terraform init -backend-config=backend.hcl
+
+    # organization = "your-org"        # Set via env var: TF_VAR_organization
+    # workspaces {
+    #   name = "keyless-eks-infra"     # Set via env var: TF_WORKSPACE
+    # }
+  }
 }
