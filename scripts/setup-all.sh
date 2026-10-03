@@ -77,9 +77,10 @@ if [ -z "$CURRENT_PROJECT" ]; then
     gcloud config set project "$PROJECT_ID"
 else
     echo "Using existing project: $CURRENT_PROJECT"
-    read -p "Use this project? (Y/n): " USE_CURRENT
+    echo "Enter 'n' to use a different project, or just press Enter to use this one:"
+    read -p "> " USE_CURRENT
     if [ "$USE_CURRENT" = "n" ] || [ "$USE_CURRENT" = "N" ]; then
-        read -p "Enter project ID: " PROJECT_ID_INPUT
+        read -p "Enter project ID to create: " PROJECT_ID_INPUT
         PROJECT_ID="$PROJECT_ID_INPUT"
         gcloud config set project "$PROJECT_ID"
     else
