@@ -28,7 +28,7 @@ permissions:
 
 env:
   TF_IN_AUTOMATION: true
-  TF_VAR_organization: ${{ vars.TFC_ORGANIZATION }}
+  TF_ORGANIZATION: ${{ vars.TFC_ORGANIZATION }}
   TF_WORKSPACE: keyless-eks-infra-gcp
   GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
   TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
@@ -49,8 +49,8 @@ jobs:
 
       - name: Check required variables
         run: |
-          if [ -z "${TF_VAR_organization}" ]; then
-            echo "Error: TF_VAR_organization variable is not set"
+          if [ -z "${TF_ORGANIZATION}" ]; then
+            echo "Error: TF_ORGANIZATION variable is not set"
             exit 1
           fi
           if [ -z "${TF_WORKSPACE}" ]; then
@@ -63,11 +63,19 @@ jobs:
         run: |
           mkdir -p "$HOME/.terraform.d"
           echo "${{ secrets.TFC_TOKEN }}" > "$HOME/.terraform.d/token"
+          echo "✓ Terraform Cloud token configured"
+
+      - name: Configure HCP Terraform Backend
+        working-directory: infra-gcp
+        run: |
+          cat > backend.hcl <<EOF
+          address = "https://app.terraform.io/api/v2/organizations/${{ env.TF_ORGANIZATION }}/workspaces/${{ env.TF_WORKSPACE }}/state/choose"
+          EOF
 
       - name: Terraform init
         working-directory: infra-gcp
         run: |
-          terraform init
+          terraform init -backend-config=backend.hcl
 
       - name: Terraform format and validate
         working-directory: infra-gcp
