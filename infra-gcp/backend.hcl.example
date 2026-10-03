@@ -1,0 +1,20 @@
+# Backend configuration for Terraform state in GCP
+# Copy this file to backend.hcl and fill in your values
+
+# GCS bucket name for Terraform state
+bucket = "your-terraform-state-bucket"
+
+# Prefix within the bucket (optional, for multiple environments)
+prefix = "keyless-eks/terraform.tfstate"
+
+# GCP Project ID
+project = "your-gcp-project-id"
+
+# Region where the bucket is located
+region = "us-central1"
+
+# Enable encryption (recommended)
+encrypt = true
+
+# Use concurrent uploads (optional)
+optimize_remote_state_storage = true

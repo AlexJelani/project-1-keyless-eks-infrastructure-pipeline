@@ -1,0 +1,20 @@
+# Backend configuration for Terraform state in Azure
+# Copy this file to backend.hcl and fill in your values
+
+# Storage account name for Terraform state
+storage_account_name = "yourterraformstate"
+
+# Container name within the storage account
+container_name = "tfstate"
+
+# Key (path) within the container
+key = "keyless-aks/terraform.tfstate"
+
+# Resource group containing the storage account
+resource_group_name = "your-rg"
+
+# Azure subscription ID
+subscription_id = "your-subscription-id"
+
+# Azure tenant ID
+tenant_id = "your-tenant-id"

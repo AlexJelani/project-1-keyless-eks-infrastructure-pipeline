@@ -1,0 +1,5 @@
+aws_region        = "ap-northeast-1"
+github_owner      = "your-github-org"
+github_repository = "your-repository"
+cluster_endpoint_public_access_cidrs = ["0.0.0.0/0"]
+

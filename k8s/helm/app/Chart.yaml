@@ -1,0 +1,7 @@
+apiVersion: v2
+name: eks-demo
+description: Health-probed service for the keyless EKS example
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+
