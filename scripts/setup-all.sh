@@ -209,7 +209,9 @@ if [ "$USE_GH_CLI" = true ]; then
         gh variable set TFC_ORGANIZATION --body "$TFC_ORGANIZATION"
         gh variable set TFC_WORKSPACE --body "$TFC_WORKSPACE"
         gh variable set GCP_PROJECT_ID --body "$PROJECT_ID"
-        gh variable set TF_STATE_BUCKET --body "$BUCKET_NAME"
+        if [ -n "$BUCKET_NAME" ]; then
+            gh variable set TF_STATE_BUCKET --body "$BUCKET_NAME"
+        fi
         gh variable set GITHUB_OWNER --body "$GITHUB_OWNER"
         gh variable set GITHUB_REPOSITORY --body "$REPO_NAME"
         
