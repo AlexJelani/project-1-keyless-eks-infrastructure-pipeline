@@ -90,6 +90,7 @@ jobs:
           TF_VAR_gcp_project_id: ${{ env.GCP_PROJECT_ID }}
           TF_VAR_github_owner: ${{ vars.GH_OWNER }}
           TF_VAR_github_repository: ${{ vars.REPOSITORY_NAME }}
+          TF_VAR_environment: ${{ github.event.inputs.environment }}
         run: |
           terraform plan -input=false
 
@@ -100,6 +101,7 @@ jobs:
           TF_VAR_gcp_project_id: ${{ env.GCP_PROJECT_ID }}
           TF_VAR_github_owner: ${{ vars.GH_OWNER }}
           TF_VAR_github_repository: ${{ vars.REPOSITORY_NAME }}
+          TF_VAR_environment: ${{ github.event.inputs.environment }}
         run: |
           terraform apply -auto-approve -input=false
 
@@ -110,5 +112,6 @@ jobs:
           TF_VAR_gcp_project_id: ${{ env.GCP_PROJECT_ID }}
           TF_VAR_github_owner: ${{ vars.GH_OWNER }}
           TF_VAR_github_repository: ${{ vars.REPOSITORY_NAME }}
+          TF_VAR_environment: ${{ github.event.inputs.environment }}
         run: |
           terraform destroy -auto-approve -input=false

@@ -67,6 +67,12 @@ variable "github_branch" {
   description = "GitHub branch for OIDC"
 }
 
+variable "environment" {
+  type        = string
+  default     = "dev"
+  description = "Deployment environment (dev, staging, prod)"
+}
+
 variable "tags" {
   type        = map(string)
   default     = { Project = "keyless-eks", ManagedBy = "terraform" }
