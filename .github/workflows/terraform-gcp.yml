@@ -30,6 +30,7 @@ env:
   TF_IN_AUTOMATION: true
   GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
   TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
+  GOOGLE_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
 jobs:
   plan-and-apply:
@@ -76,14 +77,6 @@ jobs:
           terraform fmt -check -recursive
           terraform validate
 
-      - name: Set GCP Credentials
-        working-directory: infra-gcp
-        run: |
-          echo "GOOGLE_CREDENTIALS=***" >> $GITHUB_ENV
-          echo "GCP credentials configured"
-        env:
-          GOOGLE_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
-
       - name: Terraform plan
         if: ${{ github.event.inputs.terraform_action == 'plan' || github.event.inputs.terraform_action == '' }}
         working-directory: infra-gcp
@@ -92,7 +85,6 @@ jobs:
           TF_VAR_github_owner: ${{ vars.GH_OWNER }}
           TF_VAR_github_repository: ${{ vars.REPOSITORY_NAME }}
           TF_VAR_environment: ${{ github.event.inputs.environment }}
-          GOOGLE_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
         run: |
           terraform plan -input=false
 
@@ -104,7 +96,6 @@ jobs:
           TF_VAR_github_owner: ${{ vars.GH_OWNER }}
           TF_VAR_github_repository: ${{ vars.REPOSITORY_NAME }}
           TF_VAR_environment: ${{ github.event.inputs.environment }}
-          GOOGLE_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
         run: |
           terraform apply -auto-approve -input=false
 
@@ -116,6 +107,5 @@ jobs:
           TF_VAR_github_owner: ${{ vars.GH_OWNER }}
           TF_VAR_github_repository: ${{ vars.REPOSITORY_NAME }}
           TF_VAR_environment: ${{ github.event.inputs.environment }}
-          GOOGLE_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
         run: |
           terraform destroy -auto-approve -input=false
