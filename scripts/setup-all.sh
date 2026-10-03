@@ -82,6 +82,13 @@ else
     if [ "$USE_CURRENT" = "n" ] || [ "$USE_CURRENT" = "N" ]; then
         read -p "Enter project ID to create: " PROJECT_ID_INPUT
         PROJECT_ID="$PROJECT_ID_INPUT"
+        
+        # Check if project exists, create if not
+        if ! gcloud projects describe "$PROJECT_ID" &> /dev/null; then
+            echo "Creating project: $PROJECT_ID"
+            gcloud projects create "$PROJECT_ID" --name="Keyless EKS Demo"
+        fi
+        
         gcloud config set project "$PROJECT_ID"
     else
         PROJECT_ID="$CURRENT_PROJECT"
