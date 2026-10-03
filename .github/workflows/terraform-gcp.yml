@@ -61,7 +61,9 @@ jobs:
             token = "${{ secrets.TFC_TOKEN }}"
           }
           EOF
-          echo "✓ Terraform Cloud token configured"
+          echo "Terraform Cloud token configured"
+          echo "TF_CLI_CONFIG_FILE=$HOME/.terraform.d/cli.tfrc" >> $GITHUB_ENV
+          ls -la "$HOME/.terraform.d/"
 
       - name: Terraform init
         working-directory: infra-gcp
