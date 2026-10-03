@@ -76,6 +76,14 @@ jobs:
           terraform fmt -check -recursive
           terraform validate
 
+      - name: Set GCP Credentials
+        working-directory: infra-gcp
+        run: |
+          echo "GOOGLE_CREDENTIALS=***" >> $GITHUB_ENV
+          echo "GCP credentials configured"
+        env:
+          GOOGLE_CREDENTIALS: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
       - name: Terraform plan
         if: ${{ github.event.inputs.terraform_action == 'plan' || github.event.inputs.terraform_action == '' }}
         working-directory: infra-gcp
