@@ -79,7 +79,8 @@ else
     echo "Using existing project: $CURRENT_PROJECT"
     read -p "Use this project? (Y/n): " USE_CURRENT
     if [ "$USE_CURRENT" = "n" ] || [ "$USE_CURRENT" = "N" ]; then
-        read -p "Enter project ID: " PROJECT_ID
+        read -p "Enter project ID: " PROJECT_ID_INPUT
+        PROJECT_ID="$PROJECT_ID_INPUT"
         gcloud config set project "$PROJECT_ID"
     else
         PROJECT_ID="$CURRENT_PROJECT"
