@@ -58,16 +58,8 @@ jobs:
 
       - name: Configure Terraform Cloud
         run: |
-          mkdir -p ~/.terraform.d
-          cat > ~/.terraform.d/credentials.tfrc.json << EOF
-          {
-            "credentials": {
-              "app.terraform.io": {
-                "token": "${{ secrets.TFC_TOKEN }}"
-              }
-            }
-          }
-          EOF
+          mkdir -p "$HOME/.terraform.d"
+          echo "${{ secrets.TFC_TOKEN }}" > "$HOME/.terraform.d/token"
 
       - name: Terraform init
         working-directory: infra-gcp
@@ -75,8 +67,7 @@ jobs:
           terraform init \
             -backend-config="address=https://app.terraform.io/api/v2/" \
             -backend-config="organization=${TFC_ORGANIZATION}" \
-            -backend-config="workspaces.name=${TFC_WORKSPACE}" \
-            -backend-config="token=${{ secrets.TFC_TOKEN }}"
+            -backend-config="workspaces.name=${TFC_WORKSPACE}"
 
       - name: Terraform format and validate
         working-directory: infra-gcp
