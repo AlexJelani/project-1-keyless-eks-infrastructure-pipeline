@@ -71,17 +71,10 @@ jobs:
           echo "${{ secrets.TFC_TOKEN }}" > "$HOME/.terraform.d/token"
           echo "✓ Terraform Cloud token configured"
 
-      - name: Configure HCP Terraform Backend
-        working-directory: infra-gcp
-        run: |
-          cat > backend.hcl <<EOF
-          address = "https://app.terraform.io/api/v2/organizations/${{ env.TF_ORGANIZATION }}/workspaces/${{ env.TF_WORKSPACE }}/state/choose"
-          EOF
-
       - name: Terraform init
         working-directory: infra-gcp
         run: |
-          terraform init -backend-config=backend.hcl
+          terraform init
 
       - name: Terraform format and validate
         working-directory: infra-gcp

@@ -4,5 +4,7 @@
 #   TF_WORKSPACE
 
 terraform {
-  backend "http" {}
+  backend "cloud" {
+    hostname = "app.terraform.io"
+  }
 }
