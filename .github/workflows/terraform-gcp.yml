@@ -58,7 +58,16 @@ jobs:
 
       - name: Configure Terraform Cloud
         run: |
-          echo "token = ${{ secrets.TFC_TOKEN }}" > ~/.terraform.d/credentials.tfrc.json
+          mkdir -p ~/.terraform.d
+          cat > ~/.terraform.d/credentials.tfrc.json << EOF
+          {
+            "credentials": {
+              "app.terraform.io": {
+                "token": "${{ secrets.TFC_TOKEN }}"
+              }
+            }
+          }
+          EOF
 
       - name: Terraform init
         working-directory: infra-gcp
