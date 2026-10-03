@@ -129,35 +129,30 @@ fi
 
 echo -e "${GREEN}✓ Skipping API enabling (do it manually in console)${NC}"
 
-# Step 3: Create Terraform state bucket
+# Step 3: Create Terraform state bucket (optional - only if not using Terraform Cloud)
 echo ""
 echo "=========================================="
-echo "Step 3: Create Terraform State Bucket"
+echo "Step 3: Terraform State Configuration"
 echo "=========================================="
 echo ""
 
-BUCKET_NAME="tfstate-${PROJECT_ID}"
-echo "Creating bucket: gs://$BUCKET_NAME/"
+echo -e "${YELLOW}⚠️  Using HCP Terraform as backend - GCS bucket not required${NC}"
+echo ""
 
-if gsutil ls gs://$BUCKET_NAME &> /dev/null; then
-    echo -e "${GREEN}✓ Bucket already exists${NC}"
-else
-    gsutil mb -p "$PROJECT_ID" -l us-central1 gs://$BUCKET_NAME/
-    gsutil versioning set on gs://$BUCKET_NAME/
-    gsutil encryption set -c gs://$BUCKET_NAME/
-    echo -e "${GREEN}✓ Bucket created with versioning and encryption${NC}"
-fi
-
-# Create backend.hcl
+# Create backend.hcl (empty - Terraform Cloud handles it)
 cat > infra-gcp/backend.hcl << EOF
-bucket         = "$BUCKET_NAME"
-prefix         = "keyless-eks/terraform.tfstate"
-project        = "$PROJECT_ID"
-region         = "us-central1"
-encrypt        = true
+# Backend configuration - HCP Terraform remote backend
+# State is managed by Terraform Cloud workspace: keyless-eks-infra-gcp
+
+terraform {
+  backend "http" {}
+}
 EOF
 
-echo -e "${GREEN}✓ Created infra-gcp/backend.hcl${NC}"
+echo -e "${GREEN}✓ Created infra-gcp/backend.hcl (HCP Terraform backend)${NC}"
+echo ""
+echo "Note: Terraform Cloud will manage state automatically."
+echo "No GCS bucket needed for this setup."
 
 # Step 4: Setup GitHub Actions
 echo ""
