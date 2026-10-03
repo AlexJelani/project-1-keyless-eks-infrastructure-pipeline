@@ -5,6 +5,17 @@ on:
     branches: [main]
     paths: ["app/**", "k8s/**"]
   workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Docker image tag (defaults to commit SHA)'
+        required: false
+        default: ''
+        type: string
+      namespace:
+        description: 'Kubernetes namespace'
+        required: false
+        default: 'app'
+        type: string
 
 permissions:
   contents: read
@@ -22,6 +33,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Check required variables
+        run: |
+          if [ -z "${AZURE_SUBSCRIPTION_ID}" ]; then
+            echo "Error: AZURE_SUBSCRIPTION_ID variable is not set"
+            exit 1
+          fi
+          if [ -z "${ACR_LOGIN_SERVER}" ]; then
+            echo "Error: ACR_LOGIN_SERVER variable is not set"
+            exit 1
+          fi
+          if [ -z "${AKS_CLUSTER_NAME}" ]; then
+            echo "Error: AKS_CLUSTER_NAME variable is not set"
+            exit 1
+          fi
+          echo "✓ Required variables are set"
 
       - name: Authenticate to Azure
         uses: azure/login@v2
@@ -61,7 +88,7 @@ jobs:
       - name: Deploy with Helm
         run: |
           helm upgrade --install app k8s/helm/app \
-            --namespace app --create-namespace \
+            --namespace ${{ vars.K8S_NAMESPACE || 'app' }} --create-namespace \
             --set image.repository="${{ env.ACR_LOGIN_SERVER }}" \
             --set image.tag="${{ github.sha }}" \
             --wait --atomic --timeout 5m

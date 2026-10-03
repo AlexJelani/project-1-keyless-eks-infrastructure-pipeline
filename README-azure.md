@@ -77,9 +77,9 @@ After deployment, add these repository variables to your GitHub repository:
 | Resource | AWS (ap-northeast-1) | Azure (eastus) | GCP (us-central1) |
 |----------|----------------------|----------------|-------------------|
 | Control Plane | $73/mo (EKS) | **$0** (AKS free) | **$0** (GKE free) |
-| Nodes (2x DS2_v2) | ~$70/mo | ~$50/mo (spot) | ~$52/mo (preemptible) |
+| Nodes (2x DS2_v2/e2-medium) | ~$70/mo | ~$50/mo (spot) | ~$52/mo (preemptible) |
 | VNet NAT Gateway | ~$33/mo each | ~$33/mo (Standard) | **$0** (Cloud NAT free) |
-| Container Registry | ~$2/mo (ECR) | ~$1.50/mo (ACR) | ~$0.10/mo |
+| Container Registry | ~$2/mo (ECR) | ~$1.50/mo (ACR) | ~$0.10/mo (Artifact Registry) |
 | State Backend | ~$0.50/mo (S3) | ~$0.01/mo (Blob) | **Free** (GCS) |
 | **Total (approx)** | **~$270/mo** | **~$120/mo** | **~$115/mo** |
 
@@ -145,3 +145,35 @@ infra-azure/
 - **AKS node pool stuck**: Spot instances may be evicted; consider increasing max_nodes
 - **State locking issues**: Azure Blob Storage uses lease-based locking
 - **ACR auth failures**: Ensure AcrPull/AcrPush roles are assigned to the service principal
+
+## Quick Start (2-Day Demo)
+
+For a quick demo, use the **eastus** region:
+
+```bash
+# 1. Enable required APIs
+az extension add --name aks-preview
+az feature register --name NodeOSUpgradePreview --namespace Microsoft.ContainerService
+az feature register --name AKSStandardPreview --namespace Microsoft.ContainerService
+
+# 2. Create resource group
+az group create --name keyless-aks-rg --location eastus
+
+# 3. Configure Terraform
+cp infra-azure/backend.hcl.example infra-azure/backend.hcl
+# Edit with your storage account details
+
+cp infra-azure/terraform.tfvars.example infra-azure/terraform.tfvars
+# Edit with your Azure subscription and GitHub details
+
+# 4. Deploy
+cd infra-azure
+terraform init -backend-config=backend.hcl
+terraform apply
+
+# 5. Verify cluster
+az aks get-credentials --resource-group keyless-aks-rg --name keyless-aks
+kubectl get nodes
+```
+
+**Estimated 2-day cost**: ~$7-10

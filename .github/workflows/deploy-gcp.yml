@@ -1,10 +1,21 @@
- name: Build and deploy GCP
+name: Build and deploy GCP
 
 on:
   push:
     branches: [main]
     paths: ["app/**", "k8s/**"]
   workflow_dispatch:
+    inputs:
+      image_tag:
+        description: 'Docker image tag (defaults to commit SHA)'
+        required: false
+        default: ''
+        type: string
+      namespace:
+        description: 'Kubernetes namespace'
+        required: false
+        default: 'app'
+        type: string
 
 permissions:
   contents: read
@@ -21,6 +32,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Check required variables
+        run: |
+          if [ -z "${GCP_PROJECT_ID}" ]; then
+            echo "Error: GCP_PROJECT_ID variable is not set"
+            exit 1
+          fi
+          if [ -z "${ARTIFACT_REGISTRY_REPO}" ]; then
+            echo "Error: ARTIFACT_REGISTRY_REPO variable is not set"
+            exit 1
+          fi
+          if [ -z "${GKE_CLUSTER_NAME}" ]; then
+            echo "Error: GKE_CLUSTER_NAME variable is not set"
+            exit 1
+          fi
+          echo "✓ Required variables are set"
 
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v2
@@ -59,7 +86,7 @@ jobs:
       - name: Deploy with Helm
         run: |
           helm upgrade --install app k8s/helm/app \
-            --namespace app --create-namespace \
+            --namespace ${{ vars.K8S_NAMESPACE || 'app' }} --create-namespace \
             --set image.repository="us-central1-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/${{ env.ARTIFACT_REGISTRY_REPO }}" \
             --set image.tag="${{ github.sha }}" \
             --wait --atomic --timeout 5m

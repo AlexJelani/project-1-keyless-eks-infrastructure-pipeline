@@ -5,6 +5,26 @@ on:
     branches: [main]
     paths: ["infra-gcp/**", "scripts/**"]
   workflow_dispatch:
+    inputs:
+      terraform_action:
+        description: 'Terraform action to run'
+        required: true
+        default: 'plan'
+        type: choice
+        options:
+          - plan
+          - apply
+          - destroy
+        default: 'plan'
+      environment:
+        description: 'Environment to deploy to'
+        required: false
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - staging
+          - prod
 
 permissions:
   contents: read
@@ -25,6 +45,18 @@ jobs:
         uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: ">= 1.3.0"
+
+      - name: Check required variables
+        run: |
+          if [ -z "${GCP_PROJECT_ID}" ]; then
+            echo "Error: GCP_PROJECT_ID variable is not set"
+            exit 1
+          fi
+          if [ -z "${TF_STATE_BUCKET}" ]; then
+            echo "Error: TF_STATE_BUCKET variable is not set"
+            exit 1
+          fi
+          echo "✓ Required variables are set"
 
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v2
@@ -49,6 +81,7 @@ jobs:
           terraform validate
 
       - name: Terraform plan
+        if: ${{ github.event.inputs.terraform_action == 'plan' || github.event.inputs.terraform_action == '' }}
         working-directory: infra-gcp
         env:
           TF_VAR_gcp_project_id: ${{ env.GCP_PROJECT_ID }}
@@ -58,6 +91,7 @@ jobs:
           terraform plan -out=tfplan
 
       - name: Terraform apply
+        if: ${{ github.event.inputs.terraform_action == 'apply' }}
         working-directory: infra-gcp
         env:
           TF_VAR_gcp_project_id: ${{ env.GCP_PROJECT_ID }}
@@ -65,3 +99,13 @@ jobs:
           TF_VAR_github_repository: ${{ vars.GITHUB_REPOSITORY }}
         run: |
           terraform apply -auto-approve tfplan
+
+      - name: Terraform destroy
+        if: ${{ github.event.inputs.terraform_action == 'destroy' }}
+        working-directory: infra-gcp
+        env:
+          TF_VAR_gcp_project_id: ${{ env.GCP_PROJECT_ID }}
+          TF_VAR_github_owner: ${{ vars.GITHUB_OWNER }}
+          TF_VAR_github_repository: ${{ vars.GITHUB_REPOSITORY }}
+        run: |
+          terraform destroy -auto-approve

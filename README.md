@@ -35,3 +35,24 @@ docker build -t eks-demo:local app
 
 Destroy the environment with `terraform -chdir=infra destroy` after removing any load balancers. The state bucket and lock table are separate bootstrap resources and are not destroyed by the cluster stack.
 
+## Other Cloud Providers
+
+This repository also includes infrastructure for other cloud providers:
+
+- **GCP GKE**: See [README-gcp.md](README-gcp.md)
+- **Azure AKS**: See [README-azure.md](README-azure.md)
+
+All workflows are designed to run **manually** via GitHub Actions (workflow_dispatch) or automatically on push. They will fail if required repository variables are not set.
+
+## Manual Workflow Execution
+
+To run workflows manually:
+
+1. Go to your repository on GitHub
+2. Navigate to **Actions** tab
+3. Select the workflow (e.g., "Terraform GCP")
+4. Click **Run workflow**
+5. Select the branch and configure inputs
+6. Click **Run workflow**
+
+Workflows will fail if required variables are not set in your repository settings (**Settings > Secrets and variables > Actions > Variables**).
