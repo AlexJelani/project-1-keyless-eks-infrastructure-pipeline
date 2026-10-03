@@ -56,17 +56,21 @@ This directory contains the GCP equivalent of the AWS EKS infrastructure. It pro
 
 ## GitHub Actions Configuration
 
-After deployment, add these repository variables to your GitHub repository:
+Add these repository variables to your GitHub repository (**Settings → Secrets and variables → Actions → Variables**):
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `GCP_PROJECT_ID` | GCP Project ID | `my-project-123` |
-| `GCP_WORKLOAD_IDENTITY_PROVIDER` | WIF pool provider | `projects/123456/locations/global/workloadIdentityPools/github-pool/keyless-eks/providers/github-dev` |
-| `GCP_SERVICE_ACCOUNT` | Service account email | `github-actions-dev-keyless-eks@my-project-123.iam.gserviceaccount.com` |
-| `TF_STATE_BUCKET` | Cloud Storage bucket | `my-terraform-state-bucket` |
-| `ARTIFACT_REGISTRY_REPO` | Artifact Registry repo | `keyless-eks-app` |
-| `GKE_CLUSTER_NAME` | GKE cluster name | `keyless-eks` |
-| `GKE_CLUSTER_LOCATION` | GKE cluster location | `us-central1` |
+| Variable | Description | How to Get |
+|----------|-------------|------------|
+| `TFC_ORGANIZATION` | Terraform Cloud organization | From URL: `app.terraform.io/<ORG>` |
+| `TFC_WORKSPACE` | Workspace name | `keyless-eks-infra-gcp` (hardcoded) |
+| `TFC_TOKEN` | Terraform Cloud API token | User settings → Tokens |
+| `GCP_PROJECT_ID` | GCP Project ID | `gcloud projects list` |
+| `TF_STATE_BUCKET` | Cloud Storage bucket | Your GCS bucket name |
+| `GCP_WORKLOAD_IDENTITY_PROVIDER` | WIF pool provider | From `terraform apply` output |
+| `GCP_SERVICE_ACCOUNT` | Service account email | From `terraform apply` output |
+| `GITHUB_OWNER` | GitHub organization | Your GitHub org name |
+| `GITHUB_REPOSITORY` | Repository name | Your repo name |
+
+**Quick setup**: Run `./scripts/setup-github-actions.sh` to auto-detect values and guide you through the process.
 
 ## Cost Estimate (us-central1)
 
