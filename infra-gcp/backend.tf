@@ -1,11 +1,15 @@
 # Backend configuration - HCP Terraform remote backend
 # Organization and workspace are set via environment variables:
-#   TF_ORGANIZATION
-#   TF_WORKSPACE
-# Token is read from ~/.terraform.d/token
+#   TF_CLOUD_ORGANIZATION
+#   TF_WORKSPACE_NAME
+# Token is read from ~/.terraform.d/config.hcl
 
 terraform {
   cloud {
-    hostname = "app.terraform.io"
+    organization = "alexander-tech-inc"
+
+    workspaces {
+      name = "keyless-eks-infra-gcp"
+    }
   }
 }

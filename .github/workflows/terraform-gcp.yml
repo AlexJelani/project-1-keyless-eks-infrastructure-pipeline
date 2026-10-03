@@ -28,8 +28,6 @@ permissions:
 
 env:
   TF_IN_AUTOMATION: true
-  TF_ORGANIZATION: ${{ vars.TF_VAR_ORGANIZATION }}
-  TF_WORKSPACE: ${{ vars.TF_WORKSPACE }}
   GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
   TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
 
@@ -49,21 +47,11 @@ jobs:
 
       - name: Check required variables
         run: |
-          if [ -z "${TF_ORGANIZATION}" ]; then
-            echo "Error: TF_ORGANIZATION (TF_VAR_ORGANIZATION variable) is not set"
-            exit 1
-          fi
-          if [ -z "${TF_WORKSPACE}" ]; then
-            echo "Error: TF_WORKSPACE is not set"
-            exit 1
-          fi
           if [ -z "${GCP_PROJECT_ID}" ]; then
             echo "Error: GCP_PROJECT_ID is not set"
             exit 1
           fi
           echo "✓ HCP Terraform variables are set"
-          echo "Organization: ${{ vars.TF_VAR_ORGANIZATION }}"
-          echo "Workspace: ${{ vars.TF_WORKSPACE }}"
 
       - name: Configure Terraform Cloud
         run: |
