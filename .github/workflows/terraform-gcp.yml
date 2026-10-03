@@ -49,12 +49,12 @@ jobs:
 
       - name: Check required variables
         run: |
-          if [ -z "${TFC_ORGANIZATION}" ]; then
-            echo "Error: TFC_ORGANIZATION variable is not set"
+          if [ -z "${TF_VAR_organization}" ]; then
+            echo "Error: TF_VAR_organization variable is not set"
             exit 1
           fi
-          if [ -z "${TFC_WORKSPACE}" ]; then
-            echo "Error: TFC_WORKSPACE variable is not set"
+          if [ -z "${TF_WORKSPACE}" ]; then
+            echo "Error: TF_WORKSPACE variable is not set"
             exit 1
           fi
           echo "✓ HCP Terraform variables are set"
