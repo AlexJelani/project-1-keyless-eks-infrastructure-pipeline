@@ -105,16 +105,29 @@ echo "Step 2: Enable Required APIs"
 echo "=========================================="
 echo ""
 
-gcloud services enable \
-    storage.googleapis.com \
-    container.googleapis.com \
-    artifactregistry.googleapis.com \
-    iam.googleapis.com \
-    iamcredentials.googleapis.com \
-    compute.googleapis.com \
-    --project="$PROJECT_ID"
+echo -e "${YELLOW}⚠️  API enabling requires admin permissions${NC}"
+echo "Please enable these APIs manually in the GCP Console:"
+echo "https://console.cloud.google.com/flows/enableapi?project=$PROJECT_ID"
+echo ""
+echo "Required APIs:"
+echo "  - Cloud Storage API (storage.googleapis.com)"
+echo "  - Kubernetes Engine API (container.googleapis.com)"
+echo "  - Artifact Registry API (artifactregistry.googleapis.com)"
+echo "  - IAM API (iam.googleapis.com)"
+echo "  - IAM Credentials API (iamcredentials.googleapis.com)"
+echo "  - Compute Engine API (compute.googleapis.com)"
+echo ""
+echo "Or run (if you have permissions):"
+echo "  gcloud services enable storage.googleapis.com container.googleapis.com artifactregistry.googleapis.com iam.googleapis.com iamcredentials.googleapis.com compute.googleapis.com"
+echo ""
 
-echo -e "${GREEN}✓ APIs enabled${NC}"
+read -p "Continue anyway? APIs may need to be enabled before terraform will work. (Y/n): " CONTINUE
+if [ "$CONTINUE" = "n" ] || [ "$CONTINUE" = "N" ]; then
+    echo "Exiting. Please enable APIs and run again."
+    exit 1
+fi
+
+echo -e "${GREEN}✓ Skipping API enabling (do it manually in console)${NC}"
 
 # Step 3: Create Terraform state bucket
 echo ""
