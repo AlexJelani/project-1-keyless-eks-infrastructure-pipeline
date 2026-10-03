@@ -1,14 +1,8 @@
 # Backend configuration - HCP Terraform remote backend
-# Update with your Terraform Cloud organization and workspace names
+# Organization and workspace are set via environment variables:
+#   TF_VAR_organization (or TF_ORGANIZATION)
+#   TF_WORKSPACE
 
 terraform {
-  backend "http" {
-    # These values are set via CLI or environment variables
-    # terraform login and terraform init -backend-config=backend.hcl
-
-    # organization = "your-org"        # Set via env var: TF_VAR_organization
-    # workspaces {
-    #   name = "keyless-eks-infra"     # Set via env var: TF_WORKSPACE
-    # }
-  }
+  backend "http" {}
 }

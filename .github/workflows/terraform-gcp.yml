@@ -28,8 +28,8 @@ permissions:
 
 env:
   TF_IN_AUTOMATION: true
-  TFC_ORGANIZATION: ${{ vars.TFC_ORGANIZATION }}
-  TFC_WORKSPACE: keyless-eks-infra-gcp
+  TF_VAR_organization: ${{ vars.TFC_ORGANIZATION }}
+  TF_WORKSPACE: keyless-eks-infra-gcp
   GCP_PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
   TF_STATE_BUCKET: ${{ vars.TF_STATE_BUCKET }}
 
@@ -67,10 +67,7 @@ jobs:
       - name: Terraform init
         working-directory: infra-gcp
         run: |
-          terraform init \
-            -backend-config="address=https://app.terraform.io/api/v2/" \
-            -backend-config="organization=${TFC_ORGANIZATION}" \
-            -backend-config="workspaces.name=${TFC_WORKSPACE}"
+          terraform init
 
       - name: Terraform format and validate
         working-directory: infra-gcp
